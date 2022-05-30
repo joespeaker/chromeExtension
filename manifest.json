@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Who's In?",
+    "version": "0.1.0",
+    "description": "Click the popout to see who is in the tutor center.",
+    "action": {
+        "default_icon": {             
+          "16": "images/icon16.png",  
+          "24": "images/icon24.png",  
+          "32": "images/icon32.png"   
+        },
+        "default_title": "Who's In?",  
+        "default_popup": "popout.html" 
+      }
+}
