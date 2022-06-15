@@ -10,34 +10,52 @@ let nextMonth = getMonthName(monthNumber+1);
 let month = getMonthName(monthNumber);
 let monthDay = month + '-' + adjustDate(day, date, monthNumber);
 
-//these are the arrays which we will display on the popout
-let name = [];
-let track = [];
-let house = document.getElementById('in');
+//arrays and html variables
+const track = [];
+const name = []
+let house = document.getElementById('names');
+let size = 0;
 
+let dayHouse = document.getElementById('day');
+dayHouse.textContent += dayofweek + ":";
 
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: 'keyrRyE4uADzRD3rx'}).base('appEkotM6yOke3kE3');
 
-base('Spring 2022 Tutor Center Schedule').select({
-    view: "grid_view"
-}).eachPage(function page(records, fetchNextPage) {
-    // This function (`page`) will get called for each page of records.
-
-    records.forEach(function(record) {
-        if(record.get('Name').contains(monthDay)){
-            let nameArray = record.get('Name').split(" ")
-            name.push(nameArray[5])
-            console.log(nameArray[5])
-        }
+function getRecords() {
+    base('Spring 2022 Tutor Center Schedule').select({
+        // Selecting grid_view:
+        view: "grid_view"
+    }).eachPage(function page(records, fetchNextPage) {
+        // This function (`page`) will get called for each page of records.
+        records.forEach(function(record) {
+            let dataName = record.get('Name');
+            let dataHours = record.get(getColumnName(day))
+            if(dataName.includes(monthDay)){
+                    let nameArray = dataName.split(" ");
+                    name[size] =  nameArray[5] + ' ' + dataHours;
+                    size++;
+            }
+        });
         fetchNextPage();
-        console.log();
-}, function done(err) {
-    if (err) { console.error(err); return; }
-})
-}); 
+    
+    }, function done(err) {
+        //put anything and everything here or else it won't work haha :( 
+        updateList(name)
+        if (err) { console.error(err); return; }
+    });
+}
+getRecords();
 
-
+function updateList(array) {
+  
+    for(var i = 0; i<array.length; i++) {
+        
+        let li = document.createElement("li");
+        li.innerText = array[i];
+        house.appendChild(li);
+    }
+}
 
 function getMonthName(num) {
     if(num == 0) {
@@ -82,6 +100,24 @@ function getDayName(num) {
         return "Friday"
     } else if (num == 6) {
         return "Saturday"
+    }
+};
+
+function getColumnName(num) {
+    if(num == 0) {
+        return "Sunday Hours (CST)"
+    } else if (num == 1) {
+        return "Monday Hours (CST)"
+    } else if (num == 2) {
+        return "Tuesday Hours (CST)"
+    } else if (num == 3) {
+        return "Wednesday Hours (CST)"
+    } else if (num == 4) {
+        return "Thursday Hours (CST)"
+    } else if (num == 5) {
+        return "Friday Hours (CST)"
+    } else if (num == 6) {
+        return "Saturday Hours (CST)"
     }
 };
 
